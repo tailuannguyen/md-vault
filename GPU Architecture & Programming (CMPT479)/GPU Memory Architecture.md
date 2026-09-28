@@ -1,0 +1,5 @@
+- Peak Computational Throughput
+- Peak Memory Bandwidth
+- Compute-bound vs Memory-bound kernels
+- FLOP/B
+- Roofline Model
