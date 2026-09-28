@@ -11,14 +11,12 @@
             "id": "a6eb42a4362242a5",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "pdf",
               "state": {
-                "file": "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
-                "mode": "source",
-                "source": false
+                "file": "gpu_architecture_and_programming_cmpt_479/raw_files/01_Introduction.pdf"
               },
-              "icon": "lucide-file",
-              "title": "gpu_memory_architecture"
+              "icon": "lucide-file-text",
+              "title": "01_Introduction"
             }
           }
         ]
@@ -99,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
+                "file": "gpu_architecture_and_programming_cmpt_479/raw_files/01_Introduction.pdf",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +116,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
+                "file": "gpu_architecture_and_programming_cmpt_479/raw_files/01_Introduction.pdf",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -161,7 +159,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
+                "file": "gpu_architecture_and_programming_cmpt_479/raw_files/01_Introduction.pdf",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -188,6 +186,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "64fea636fa750022",
-  "lastOpenFiles": []
+  "active": "a6eb42a4362242a5",
+  "lastOpenFiles": [
+    "gpu_architecture_and_programming_cmpt_479/raw_files/03_Memory_Perf_Optimizations.pdf",
+    "gpu_architecture_and_programming_cmpt_479/raw_files/02_Arch_Scheduling.pdf",
+    "gpu_architecture_and_programming_cmpt_479/raw_files/01_Introduction.pdf",
+    "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
+    "gpu_architecture_and_programming_cmpt_479/raw_files"
+  ]
 }
