@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "GPU_architecture_and_programming_CMPT479/GPU Memory Architecture.md",
+                "file": "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "GPU Memory Architecture"
+              "title": "gpu_memory_architecture"
             }
           }
         ]
@@ -99,7 +99,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "GPU_architecture_and_programming_CMPT479/GPU Memory Architecture.md",
+                "file": "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +118,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "GPU_architecture_and_programming_CMPT479/GPU Memory Architecture.md",
+                "file": "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -161,7 +161,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "GPU_architecture_and_programming_CMPT479/GPU Memory Architecture.md",
+                "file": "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
