@@ -4,19 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "b51d2dccb9b9bb93",
+        "id": "78559f38d6c84b43",
         "type": "tabs",
         "children": [
           {
-            "id": "a6eb42a4362242a5",
+            "id": "446a0db066c1361f",
             "type": "leaf",
             "state": {
-              "type": "pdf",
-              "state": {
-                "file": "gpu_architecture_and_programming_cmpt_479/raw_files/01_Introduction.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "01_Introduction"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ]
@@ -81,7 +79,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 446.484375
   },
   "right": {
     "id": "373d1124071d4457",
@@ -186,12 +184,31 @@
       "bases:Create new base": false
     }
   },
-  "active": "a6eb42a4362242a5",
+  "active": "446a0db066c1361f",
   "lastOpenFiles": [
+    "gpu_architecture_and_programming_cmpt_479/Roofline and Arithmetic Intensity.md",
+    "gpu_architecture_and_programming_cmpt_479/CUDA Data Mapping and Kernels.md",
+    "gpu_architecture_and_programming_cmpt_479/03 - GPU Memory and Performance.md",
+    "gpu_architecture_and_programming_cmpt_479/02 - CUDA Grids, GPU Architecture, and Scheduling.md",
+    "gpu_architecture_and_programming_cmpt_479/01 - Introduction and Parallel Programming.md",
+    "gpu_architecture_and_programming_cmpt_479/Parallel Computing Foundations.md",
+    "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
+    "gpu_architecture_and_programming_cmpt_479/Memory Access and Optimization.md",
+    "gpu_architecture_and_programming_cmpt_479/CUDA Memory and Tiling.md",
+    "gpu_architecture_and_programming_cmpt_479/Synchronization and Divergence.md",
+    "gpu_architecture_and_programming_cmpt_479/GPU Execution and Occupancy.md",
+    "gpu_architecture_and_programming_cmpt_479/CUDA Execution and Data Movement.md",
+    "gpu_architecture_and_programming_cmpt_479/README.md",
+    "gpu_architecture_and_programming_cmpt_479/Optimization Workflow.md",
+    "gpu_architecture_and_programming_cmpt_479/Memory Access Patterns.md",
+    "gpu_architecture_and_programming_cmpt_479/Shared Memory Tiling.md",
+    "gpu_architecture_and_programming_cmpt_479/CUDA Memory Spaces.md",
+    "gpu_architecture_and_programming_cmpt_479/Image and Matrix Kernels.md",
+    "gpu_architecture_and_programming_cmpt_479/CUDA Thread Indexing and Data Layout.md",
+    "GPU Memory Architecture.md",
+    "gpu_architecture_and_programming_cmpt_479/raw_files/01_Introduction.pdf",
     "gpu_architecture_and_programming_cmpt_479/raw_files/03_Memory_Perf_Optimizations.pdf",
     "gpu_architecture_and_programming_cmpt_479/raw_files/02_Arch_Scheduling.pdf",
-    "gpu_architecture_and_programming_cmpt_479/raw_files/01_Introduction.pdf",
-    "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
     "gpu_architecture_and_programming_cmpt_479/raw_files"
   ]
 }

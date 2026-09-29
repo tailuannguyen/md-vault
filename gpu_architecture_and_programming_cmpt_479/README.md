@@ -1,17 +1,9 @@
-# CMPT 479/982: GPU Architecture & Programming
+# CMPT 479/982: GPU Architecture and Programming
 
-## Course notes
+The notes follow three lecture streams. Start with a lecture overview, then follow the **Next** link at the end of each topic. Each stream has its own source PDF and a short sequence of concepts.
 
-- [[01 - Introduction and Parallel Programming]] — course context, parallel architecture, programming models, and CUDA basics.
-- [[02 - CUDA Grids, GPU Architecture, and Scheduling]] — mapping data to threads, modern GPU structure, synchronization, warps, and divergence.
-- [[03 - GPU Memory and Performance]] — memory hierarchy, roofline analysis, tiled GEMM, coalescing, and latency hiding.
-- [[GPU Memory Architecture]] — quick reference for throughput, bandwidth, arithmetic intensity, and the roofline model.
+1. [[01 - Introduction and Parallel Programming]] - parallel computing → host/device execution → vector addition.
+2. [[02 - CUDA Grids, GPU Architecture, and Scheduling]] - data mapping → hardware scheduling → synchronization.
+3. [[03 - GPU Memory and Performance]] - roofline analysis → memory reuse → access patterns and optimization.
 
-## Source material
-
-Original lecture PDFs are kept in [[raw_files/]]:
-
-- [[raw_files/01_Introduction.pdf]]
-- [[raw_files/02_Arch_Scheduling.pdf]]
-- [[raw_files/03_Memory_Perf_Optimizations.pdf]]
-
+The lecture overviews link to their source slides. A few topic pages link across streams when an example directly motivates the next concept.
