@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "78559f38d6c84b43",
+        "id": "04f98f449da51733",
         "type": "tabs",
         "children": [
           {
-            "id": "446a0db066c1361f",
+            "id": "81689ae4e0380ba0",
             "type": "leaf",
             "state": {
-              "type": "graph",
+              "type": "empty",
               "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           }
         ]
@@ -75,7 +75,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -184,13 +185,17 @@
       "bases:Create new base": false
     }
   },
-  "active": "446a0db066c1361f",
+  "active": "0ffa47cca6882655",
   "lastOpenFiles": [
-    "gpu_architecture_and_programming_cmpt_479/Roofline and Arithmetic Intensity.md",
-    "gpu_architecture_and_programming_cmpt_479/CUDA Data Mapping and Kernels.md",
+    "gpu_architecture_and_programming_cmpt_479/Introduction and Parallel Programming.md",
+    "gpu_architecture_and_programming_cmpt_479/GPU Memory and Performance.md",
+    "gpu_architecture_and_programming_cmpt_479/CUDA Grids, GPU Architecture, and Scheduling.md",
     "gpu_architecture_and_programming_cmpt_479/03 - GPU Memory and Performance.md",
     "gpu_architecture_and_programming_cmpt_479/02 - CUDA Grids, GPU Architecture, and Scheduling.md",
     "gpu_architecture_and_programming_cmpt_479/01 - Introduction and Parallel Programming.md",
+    "README.md",
+    "gpu_architecture_and_programming_cmpt_479/Roofline and Arithmetic Intensity.md",
+    "gpu_architecture_and_programming_cmpt_479/CUDA Data Mapping and Kernels.md",
     "gpu_architecture_and_programming_cmpt_479/Parallel Computing Foundations.md",
     "gpu_architecture_and_programming_cmpt_479/gpu_memory_architecture.md",
     "gpu_architecture_and_programming_cmpt_479/Memory Access and Optimization.md",
