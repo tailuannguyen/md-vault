@@ -20,12 +20,12 @@ source: "[[raw_files/03_Memory_Perf_Optimizations.pdf]]"
 
 **Source:** [[raw_files/03_Memory_Perf_Optimizations.pdf|Lecture 3 slides]]. References use PDF page numbers. Worked answers, code adaptations, and checklists are synthesized review aids. Code has not been compiled on a CUDA device. Numerical hardware limits are the lecture's examples.
 
-**Prerequisites:** [[Introduction and Parallel Programming#CUDA execution and data movement|Host/device execution]] and [[CUDA Grids, GPU Architecture, and Scheduling#Occupancy and resource limits|warps, barriers, and occupancy]].
+**Prerequisites:** [[introduction_and_parallel_programming#CUDA execution and data movement|Host/device execution]] and [[cuda_grids_gpu_architecture_and_scheduling#Occupancy and resource limits|warps, barriers, and occupancy]].
 
 ## Review route
 
 - Before an exam: derive [[#Roofline model]], explain the two [[#Tiled matrix multiplication|tile barriers]], compute [[#Shared memory bank conflicts]], then attempt [[#Retrieval practice]].
-- Cumulative review: connect [[Introduction and Parallel Programming#Performance and Amdahl's law|application speedup]] → kernel roofline → [[CUDA Grids, GPU Architecture, and Scheduling#Occupancy and resource limits|resource limits]].
+- Cumulative review: connect [[introduction_and_parallel_programming#Performance and Amdahl's law|application speedup]] → kernel roofline → [[cuda_grids_gpu_architecture_and_scheduling#Occupancy and resource limits|resource limits]].
 - At work: follow [[#Optimization workflow]] and use [[#Optimization decision table]] to select one change at a time.
 
 ## Roofline model
@@ -54,7 +54,7 @@ For the lecture's H100 example, $C_{peak}\approx67$ TFLOP/s and $BW_{peak}=3.35$
 
 ### Vector addition
 
-*Source: p. 8; kernel in [[Introduction and Parallel Programming#Vector addition]].*
+*Source: p. 8; kernel in [[introduction_and_parallel_programming#Vector addition|Vector addition]].*
 
 One FP32 output performs one addition, two 4-byte loads, and one 4-byte store:
 
@@ -85,7 +85,7 @@ $$
 
 At $W=1024$, this is approximately 170.7 FLOP/B. This is an ideal reuse estimate, not the intensity of any arbitrary GEMM implementation. Page 9 rounds the coefficient to 0.167 and describes about 167 FLOP/B; $W/6$ is the consistent value.
 
-The [[CUDA Grids, GPU Architecture, and Scheduling#Naive matrix multiplication|naive kernel]] fetches two floats for each multiply-add step. Including its final output stores, nominal traffic is $8W^3+4W^2$ bytes:
+The [[cuda_grids_gpu_architecture_and_scheduling#Naive matrix multiplication|naive kernel]] fetches two floats for each multiply-add step. Including its final output stores, nominal traffic is $8W^3+4W^2$ bytes:
 
 $$
 I_{naive}=\frac{2W^3}{8W^3+4W^2}\longrightarrow0.25\text{ FLOP/B}.
@@ -181,7 +181,7 @@ Each input element is nominally requested $W$ times without tiling and $W/T$ tim
 
 ## Shared memory and occupancy
 
-*Source: pp. 23-25; general method in [[CUDA Grids, GPU Architecture, and Scheduling#Occupancy and resource limits]].*
+*Source: pp. 23-25; general method in [[cuda_grids_gpu_architecture_and_scheduling#Occupancy and resource limits|Occupancy and resource limits]].*
 
 Two FP32 tiles use $s=8T^2$ shared bytes per block. With $T^2$ threads, that is 8 bytes/thread. At $T=32$, storage is 8192 bytes/block and the block has 1024 threads. Shared-memory capacity need not be its binding constraint; threads, registers, block slots, and per-block restrictions still matter.
 
@@ -203,7 +203,7 @@ size_t sharedBytes = 2 * T * T * sizeof(float);
 // dynamicKernel<<<grid, block, sharedBytes>>>(...);
 ```
 
-Page 25's displayed declaration is malformed and mixes byte and element offset conventions. The fragment above keeps those units explicit. Account for static plus dynamic shared storage, and verify both per-block and per-SM limits. The correct query fields are explained in [[CUDA Grids, GPU Architecture, and Scheduling#Querying actual resources|the device-query note]], based on [NVIDIA's API reference](https://docs.nvidia.com/cuda/cuda-runtime-api/cuda_runtime_api/structcudaDeviceProp.html).
+Page 25's displayed declaration is malformed and mixes byte and element offset conventions. The fragment above keeps those units explicit. Account for static plus dynamic shared storage, and verify both per-block and per-SM limits. The correct query fields are explained in [[cuda_grids_gpu_architecture_and_scheduling#Querying actual resources|the device-query note]], based on [NVIDIA's API reference](https://docs.nvidia.com/cuda/cuda-runtime-api/cuda_runtime_api/structcudaDeviceProp.html).
 
 ## Global memory coalescing
 
@@ -220,7 +220,7 @@ For row-major `N[k*W + col]`, consecutive `threadIdx.x` values map to consecutiv
 
 **Corner turning:** load column-major input in the order that is contiguous in global memory, then arrange it in shared memory for the later dot products. Swapping the load roles of `threadIdx.x` and `threadIdx.y` must be accompanied by a consistent shared-memory placement. Simply changing a global address without checking the logical tile contents can produce the wrong matrix.
 
-For $16\times16$ blocks, each warp spans two rows. Analyze both groups of 16 lanes; do not assume every warp corresponds to one entire matrix row. See [[CUDA Grids, GPU Architecture, and Scheduling#Warps and SIMT|warp linearization]].
+For $16\times16$ blocks, each warp spans two rows. Analyze both groups of 16 lanes; do not assume every warp corresponds to one entire matrix row. See [[cuda_grids_gpu_architecture_and_scheduling#Warps and SIMT|warp linearization]].
 
 **Distinction:** tiling reduces repeated bytes through reuse; coalescing reduces transaction waste for requested bytes. A kernel may need both.
 
@@ -238,7 +238,7 @@ $$
 
 A 64-bit channel at 3.2 GHz gives $8\cdot2\cdot3.2=51.2$ GB/s, the lecture's DDR5-6400 example. Peak bus bandwidth is not necessarily the bandwidth achieved by a kernel.
 
-The lecture's simplified bank-overlap model needs at least $R+1$ banks when $R$ is the ratio of array access latency to transfer time. This is an explanatory model, not a universal bank-count formula for every memory controller. [[CUDA Grids, GPU Architecture, and Scheduling#Latency hiding|Ready warp scheduling]] and parallel memory requests both help tolerate latency; neither increases the physical peak bandwidth.
+The lecture's simplified bank-overlap model needs at least $R+1$ banks when $R$ is the ratio of array access latency to transfer time. This is an explanatory model, not a universal bank-count formula for every memory controller. [[cuda_grids_gpu_architecture_and_scheduling#Latency hiding|Ready warp scheduling]] and parallel memory requests both help tolerate latency; neither increases the physical peak bandwidth.
 
 ## Shared memory bank conflicts
 
@@ -286,7 +286,7 @@ Use correctly aligned full vector groups and separately handle any scalar tail. 
 
 ### Thread coarsening
 
-Give each thread multiple outputs or more work. It can reduce redundant work and overhead, but can also reduce available blocks, increase registers, or change coalescing. Connect the decision to [[CUDA Grids, GPU Architecture, and Scheduling#Waves and transparent scalability|wave utilization]] and [[CUDA Grids, GPU Architecture, and Scheduling#Occupancy and resource limits|occupancy]].
+Give each thread multiple outputs or more work. It can reduce redundant work and overhead, but can also reduce available blocks, increase registers, or change coalescing. Connect the decision to [[cuda_grids_gpu_architecture_and_scheduling#Waves and transparent scalability|wave utilization]] and [[cuda_grids_gpu_architecture_and_scheduling#Occupancy and resource limits|occupancy]].
 
 ### Loop unrolling
 
@@ -328,7 +328,7 @@ The checklist on p. 42 also mentions register tiling, warp-level cooperation, an
 6. **Recheck correctness and time.** Keep the change only if it benefits representative workloads.
 7. **Repeat with the new bottleneck.** Stop when additional complexity has little useful benefit near the relevant limit.
 
-Remember [[Introduction and Parallel Programming#Performance and Amdahl's law|Amdahl's law]]: a kernel improvement must matter at application scope. Keep a brief record of baseline, change, assumptions, measured result, and reason to retain it.
+Remember [[introduction_and_parallel_programming#Performance and Amdahl's law|Amdahl's law]]: a kernel improvement must matter at application scope. Keep a brief record of baseline, change, assumptions, measured result, and reason to retain it.
 
 ## Retrieval practice
 
@@ -367,4 +367,4 @@ Remember [[Introduction and Parallel Programming#Performance and Amdahl's law|Am
 - [ ] I can name the resource cost of coarsening, unrolling, and double buffering.
 - [ ] I can justify an optimization with measured application and kernel results.
 
-**Previous:** [[CUDA Grids, GPU Architecture, and Scheduling]]. **Return to foundations:** [[Introduction and Parallel Programming]].
+**Previous:** [[cuda_grids_gpu_architecture_and_scheduling|CUDA Grids, GPU Architecture, and Scheduling]]. **Return to foundations:** [[introduction_and_parallel_programming|Introduction and Parallel Programming]].

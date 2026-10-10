@@ -19,13 +19,13 @@ source: "[[raw_files/01_Introduction.pdf]]"
 
 **Source:** [[raw_files/01_Introduction.pdf|Lecture 1 slides]]. Page references below use PDF page numbers. These are synthesized study notes; worked solutions and practical checklists are review aids derived from the lecture, rather than instructor-provided answers. Code is illustrative and has not been compiled on a CUDA device.
 
-**Knowledge links:** [[CUDA Grids, GPU Architecture, and Scheduling|Thread mapping and scheduling]] explains how the grid executes. [[GPU Memory and Performance|Memory and performance]] explains why many threads alone do not guarantee speed.
+**Knowledge links:** [[cuda_grids_gpu_architecture_and_scheduling|Thread mapping and scheduling]] explains how the grid executes. [[gpu_memory_and_performance|Memory and performance]] explains why many threads alone do not guarantee speed.
 
 ## Review route
 
 - First pass: [[#Parallel computing foundations]] → [[#Performance and Amdahl's law]] → [[#CUDA execution and data movement]] → [[#Vector addition]].
 - Before an exam: derive the formulas and kernel from memory, then attempt [[#Retrieval practice]] before expanding the answers.
-- Cumulative review: connect Amdahl's application limit to [[GPU Memory and Performance#Roofline model|the kernel's roofline limit]].
+- Cumulative review: connect Amdahl's application limit to [[gpu_memory_and_performance#Roofline model|the kernel's roofline limit]].
 - At work: start with [[#Practical review checklist]], then follow the scheduling and memory links.
 
 > [!info] Assessment context from the uploaded slides
@@ -46,7 +46,7 @@ Flynn's taxonomy counts **instruction streams** and **data streams**:
 | MISD | Multiple | One | Several instruction streams process one data stream; uncommon |
 | MIMD | Multiple | Multiple | Independent processors can execute different instructions on different data |
 
-The lecture places modern parallel machines, including GPUs as a whole, under MIMD. Within a GPU, warp execution uses SIMD hardware through the SIMT programming model. These describe different levels of the machine; see [[CUDA Grids, GPU Architecture, and Scheduling#Warps and SIMT|Warps and SIMT]].
+The lecture places modern parallel machines, including GPUs as a whole, under MIMD. Within a GPU, warp execution uses SIMD hardware through the SIMT programming model. These describe different levels of the machine; see [[cuda_grids_gpu_architecture_and_scheduling#Warps and SIMT|Warps and SIMT]].
 
 | Memory architecture | Addressing and communication                                  | Locality implication                                |
 | ------------------- | ------------------------------------------------------------- | --------------------------------------------------- |
@@ -59,7 +59,7 @@ The lecture places modern parallel machines, including GPUs as a whole, under MI
 **Cache coherence** concerns consistent cached copies. It does not make a multi-step operation atomic. Two withdrawals that both read an old balance can still produce an incorrect result, even on a coherent machine.
 
 > [!warning] Two meanings of shared memory
-> A **shared-memory architecture** is a general machine organization. CUDA **shared memory** is a specific on-chip, block-scoped scratchpad. See [[GPU Memory and Performance#GPU memory spaces|GPU memory spaces]].
+> A **shared-memory architecture** is a general machine organization. CUDA **shared memory** is a specific on-chip, block-scoped scratchpad. See [[gpu_memory_and_performance#GPU memory spaces|GPU memory spaces]].
 
 ### Programming models and decomposition
 
@@ -83,7 +83,7 @@ Hardware architecture and programming model are separate choices. Message passin
 - **Load imbalance:** the slowest participant delays progress at a barrier.
 - **Granularity:** small tasks make balancing easier but can spend a large fraction of time communicating or synchronizing. Larger tasks amortize overhead but may leave too little parallel work.
 
-These tradeoffs reappear as [[CUDA Grids, GPU Architecture, and Scheduling#Synchronization and block independence|block barriers]], [[CUDA Grids, GPU Architecture, and Scheduling#Waves and transparent scalability|waves]], and [[GPU Memory and Performance#Other optimization techniques|thread coarsening]].
+These tradeoffs reappear as [[cuda_grids_gpu_architecture_and_scheduling#Synchronization and block independence|block barriers]], [[cuda_grids_gpu_architecture_and_scheduling#Waves and transparent scalability|waves]], and [[gpu_memory_and_performance#Other optimization techniques|thread coarsening]].
 
 ## CPU and GPU design tradeoffs
 
@@ -135,7 +135,7 @@ $$
 
 Here $T_{extra}$ accounts for additional transfers, launches, or other overhead. The fraction $F$ is a fraction of **baseline runtime**, not a fraction of source-code lines. Keep baseline and optimized measurement boundaries consistent.
 
-**Connection:** Amdahl limits the application benefit; [[GPU Memory and Performance#Roofline model|roofline]] limits a kernel's compute throughput for its memory traffic. Both can constrain the same program.
+**Connection:** Amdahl limits the application benefit; [[gpu_memory_and_performance#Roofline model|roofline]] limits a kernel's compute throughput for its memory traffic. Both can constrain the same program.
 
 ## CUDA execution and data movement
 
@@ -207,11 +207,11 @@ The ceiling formula assumes the addition fits the integer type. For a practical 
 
 ### Giving a thread more work
 
-If each thread handles **two adjacent elements**, first compute its logical thread ID $t$, then use $i_0=2t$, $i_1=2t+1$. Launch $\lceil n/(2B)\rceil$ blocks and check each element separately. Adjacent lanes now have stride two for their first scalar load. Alternative mappings and vector loads can change memory behavior; see [[GPU Memory and Performance#Global memory coalescing|coalescing]] and [[GPU Memory and Performance#Other optimization techniques|coarsening]].
+If each thread handles **two adjacent elements**, first compute its logical thread ID $t$, then use $i_0=2t$, $i_1=2t+1$. Launch $\lceil n/(2B)\rceil$ blocks and check each element separately. Adjacent lanes now have stride two for their first scalar load. Alternative mappings and vector loads can change memory behavior; see [[gpu_memory_and_performance#Global memory coalescing|coalescing]] and [[gpu_memory_and_performance#Other optimization techniques|coarsening]].
 
 ## Preview of multidimensional mapping
 
-*Source: pp. 69-78; developed in [[CUDA Grids, GPU Architecture, and Scheduling#Multidimensional mapping|Lecture 2]].*
+*Source: pp. 69-78; developed in [[cuda_grids_gpu_architecture_and_scheduling#Multidimensional mapping|Lecture 2]].*
 
 Use $x$ for columns and $y$ for rows:
 
@@ -256,4 +256,4 @@ These priorities are suggested study targets, not a statement of exam coverage.
 - [ ] Check errors and compare results against a trusted sequential reference.
 - [ ] Measure total application time as well as device computation time.
 
-**Next:** [[CUDA Grids, GPU Architecture, and Scheduling]]. **Performance connection:** [[GPU Memory and Performance#Roofline examples|Vector addition's bandwidth limit]].
+**Next:** [[cuda_grids_gpu_architecture_and_scheduling|CUDA Grids, GPU Architecture, and Scheduling]]. **Performance connection:** [[gpu_memory_and_performance#Roofline examples|Vector addition's bandwidth limit]].

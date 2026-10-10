@@ -20,12 +20,12 @@ source: "[[raw_files/02_Arch_Scheduling.pdf]]"
 
 **Source:** [[raw_files/02_Arch_Scheduling.pdf|Lecture 2 slides]]. References use PDF page numbers. Explanations and worked answers are synthesized review material. Code fragments are illustrative and have not been compiled on a CUDA device. Hardware values below are the lecture's examples, not specifications for every GPU.
 
-**Prerequisite:** [[Introduction and Parallel Programming#Vector addition|CUDA indexing and vector addition]]. **Next:** [[GPU Memory and Performance|Memory reuse and optimization]].
+**Prerequisite:** [[introduction_and_parallel_programming#Vector addition|CUDA indexing and vector addition]]. **Next:** [[gpu_memory_and_performance|Memory reuse and optimization]].
 
 ## Review route
 
 - Early exam review: derive [[#Multidimensional mapping]], trace [[#Example kernels]], and explain [[#Synchronization and block independence]].
-- Cumulative review: compute [[#Warps and SIMT]], [[#Control divergence]], and [[#Occupancy and resource limits]], then combine occupancy with [[GPU Memory and Performance#Shared memory and occupancy|shared-memory requirements]].
+- Cumulative review: compute [[#Warps and SIMT]], [[#Control divergence]], and [[#Occupancy and resource limits]], then combine occupancy with [[gpu_memory_and_performance#Shared memory and occupancy|shared-memory requirements]].
 - Work reference: use [[#Practical review checklist]] to inspect a launch or diagnose insufficient parallel work.
 
 ## Multidimensional mapping
@@ -102,7 +102,7 @@ For the lecture's truncated-neighborhood average:
 
 For a $3\times3$ neighborhood on an image at least $3\times3$, the interior uses 9 pixels, a non-corner edge uses 6, and a corner uses 4. Dividing every output by 9 would darken the edges under this boundary convention.
 
-Use separate input and output storage: writing into the input could change what other threads read. Overlapping **reads** are safe when the input is immutable; overlapping writes or read/write dependencies require more care. Neighborhood reuse motivates [[GPU Memory and Performance#Tiled matrix multiplication|shared-memory tiling]], although blur tiles also need halo pixels beyond the output tile.
+Use separate input and output storage: writing into the input could change what other threads read. Overlapping **reads** are safe when the input is immutable; overlapping writes or read/write dependencies require more care. Neighborhood reuse motivates [[gpu_memory_and_performance#Tiled matrix multiplication|shared-memory tiling]], although blur tiles also need halo pixels beyond the output tile.
 
 ### Naive matrix multiplication
 
@@ -128,7 +128,7 @@ A $4\times4$ output with $2\times2$ blocks uses four blocks and 16 threads. Each
 
 **Alternative mapping:** one thread per output row needs only $W$ threads, each doing $W$ dot products. It reduces the number of threads but increases serial work per thread and changes the warp's memory access pattern. One thread per output column is another possible design. The exercise on p. 21 repeats “row” twice; treat it as a duplicated prompt rather than assuming a hidden second design.
 
-**Connection:** algorithmic independence makes this kernel correct, but repeated input reads make it inefficient. See [[GPU Memory and Performance#Roofline examples|naive GEMM intensity]] and [[GPU Memory and Performance#Tiled matrix multiplication|tiled GEMM]].
+**Connection:** algorithmic independence makes this kernel correct, but repeated input reads make it inefficient. See [[gpu_memory_and_performance#Roofline examples|naive GEMM intensity]] and [[gpu_memory_and_performance#Tiled matrix multiplication|tiled GEMM]].
 
 ## GPU hardware hierarchy
 
@@ -166,7 +166,7 @@ __syncthreads();
 // Now consume shared values, with output access guarded as needed.
 ```
 
-Do not let boundary threads return before a barrier that other block threads need. [[GPU Memory and Performance#Tiled matrix multiplication|Boundary-safe tiled GEMM]] uses zero-filled loads and unconditional barriers.
+Do not let boundary threads return before a barrier that other block threads need. [[gpu_memory_and_performance#Tiled matrix multiplication|Boundary-safe tiled GEMM]] uses zero-filled loads and unconditional barriers.
 
 Ordinary blocks must support execution in arbitrary order. `__syncthreads()` does not synchronize a grid. A scheme in which one block spins waiting for another can prevent progress if the needed block has not been scheduled. The lecture introduces cluster and grid synchronization through Cooperative Groups; these require the appropriate execution model and launch support, rather than replacing a block barrier casually.
 
@@ -228,7 +228,7 @@ Since Volta, independent thread scheduling permits more flexible progress among 
 
 ## Occupancy and resource limits
 
-*Source: pp. 37-40. Shared-memory extension: [[GPU Memory and Performance#Shared memory and occupancy]].*
+*Source: pp. 37-40. Shared-memory extension: [[gpu_memory_and_performance#Shared memory and occupancy|Shared memory and occupancy]].*
 
 $$
 occupancy=\frac{resident\ warps\ per\ SM}{maximum\ supported\ warps\ per\ SM}.
@@ -307,6 +307,6 @@ Page 38 introduces `cudaGetDeviceCount` and `cudaGetDeviceProperties`. Useful fi
 - [ ] Compute resident blocks from every relevant resource limit.
 - [ ] Distinguish occupancy, active-lane efficiency, and achieved throughput.
 - [ ] Check whether the grid provides enough blocks and whether the last wave is small.
-- [ ] Follow [[GPU Memory and Performance#Optimization workflow|the memory optimization workflow]] after establishing correctness.
+- [ ] Follow [[gpu_memory_and_performance#Optimization workflow|the memory optimization workflow]] after establishing correctness.
 
-**Previous:** [[Introduction and Parallel Programming]]. **Next:** [[GPU Memory and Performance]].
+**Previous:** [[introduction_and_parallel_programming|Introduction and Parallel Programming]]. **Next:** [[gpu_memory_and_performance|GPU Memory and Performance]].
