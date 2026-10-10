@@ -19,6 +19,8 @@ $$P(c\mid t)=\frac{\exp(u_t^\top v_c)}{\sum_{k\in V}\exp(u_t^\top v_k)}.$$
 
 This softmax is normalized over the context vocabulary. Raising one candidate's probability affects the others through the shared denominator.
 
+The two tables let a word learn different parameters for its input and prediction roles. Tying them would constrain pair scores to the symmetric form $u_t^\top u_c=u_c^\top u_t$; separate tables avoid that restriction. The normalized conditional probabilities also depend on each center word's softmax denominator.
+
 ### Objective and training
 
 Let $\mathcal C_i$ be the valid context positions within the window around corpus position $i$. Minimize the negative log-likelihood:
@@ -86,6 +88,12 @@ $$P(w_i\mid\text{context})=
 \frac{\exp(u_{w_i}^\top\bar v_i)}{\sum_{k\in V}\exp(u_k^\top\bar v_i)}.$$
 
 At sentence boundaries, average over the available context tokens. Pooling discards their order. Each context window supplies one center-word target, whereas skip-gram supplies a separate prediction for each neighboring word.
+
+Train both tables by minimizing the negative log-likelihood of the observed centers:
+
+$$J_{\mathrm{CBOW}}=-\frac1T\sum_{i=1}^T\log P(w_i\mid\text{context}_i).$$
+
+The softmax loss therefore has the same classification structure as skip-gram, with the pooled context supplying the input instead of one center vector.
 
 CBOW is typically faster and often works well for frequent words. Skip-gram often works well for rarer words and smaller corpora. These are empirical tendencies; results also depend on the corpus and training settings.
 

@@ -10,7 +10,6 @@ tags:
   - gpu/scheduling
   - gpu/occupancy
   - study/exam-review
-source: "[[raw_files/02_Arch_Scheduling.pdf]]"
 ---
 
 # CUDA Grids, GPU Architecture, and Scheduling
@@ -18,7 +17,7 @@ source: "[[raw_files/02_Arch_Scheduling.pdf]]"
 > [!abstract] Core idea
 > Thread coordinates define which data a thread owns. Blocks define cooperation and resource allocation. Warps define scheduling and instruction execution. Resource limits determine how much work can reside on an SM, while ready warps allow the GPU to hide latency.
 
-**Source:** [[raw_files/02_Arch_Scheduling.pdf|Lecture 2 slides]]. References use PDF page numbers. Explanations and worked answers are synthesized review material. Code fragments are illustrative and have not been compiled on a CUDA device. Hardware values below are the lecture's examples, not specifications for every GPU.
+Code examples are illustrative and have not been compiled on a CUDA device.
 
 **Prerequisite:** [[introduction_and_parallel_programming#Vector addition|CUDA indexing and vector addition]]. **Next:** [[gpu_memory_and_performance|Memory reuse and optimization]].
 
@@ -29,8 +28,6 @@ source: "[[raw_files/02_Arch_Scheduling.pdf]]"
 - Work reference: use [[#Practical review checklist]] to inspect a launch or diagnose insufficient parallel work.
 
 ## Multidimensional mapping
-
-*Source: pp. 5-13, 21; overlaps Lecture 1 pp. 69-78.*
 
 `dim3(x,y,z)` specifies dimensions in **x, y, z** order. For a 2D image use $x$ for columns, $y$ for rows, and $z=1$.
 
@@ -63,7 +60,7 @@ $$
 index=zHW+yW+x.
 $$
 
-**Worked examples (p. 21):** $W=400$, $H=500$, row 20, column 10 gives row-major index 8010 and column-major index 5020. With depth 300, $(x,y,z)=(10,20,5)$ gives $5(500)(400)+20(400)+10=1008010$. These are element indices; multiply by the element size for byte offsets.
+**Worked examples:** $W=400$, $H=500$, row 20, column 10 gives row-major index 8010 and column-major index 5020. With depth 300, $(x,y,z)=(10,20,5)$ gives $5(500)(400)+20(400)+10=1008010$. These are element indices; multiply by the element size for byte offsets.
 
 ### Image boundary example
 
@@ -77,13 +74,11 @@ These extra threads are intentional. Avoiding out-of-bounds accesses matters mor
 
 ### Launch limits
 
-Page 6 gives a maximum of 1024 threads per block, with the **product** $B_xB_yB_z$ constrained. `(16,32,2)` has 1024 threads; `(32,32,2)` has 2048 and is invalid under that limit. Per-axis limits also apply; a legal product alone is not sufficient.
+For an example device limit of 1024 threads per block, the **product** $B_xB_yB_z$ must not exceed 1024. `(16,32,2)` has 1024 threads; `(32,32,2)` has 2048 and is invalid under that limit. Per-axis limits also apply; a legal product alone is not sufficient.
 
 The lecture gives grid limits $G_x\le2^{31}-1$ and $G_y,G_z\le65535$. Query the actual device for production use. A block's shape does not determine how many CUDA cores it permanently owns.
 
 ## Example kernels
-
-*Source: pp. 10-20.*
 
 ### Color to grayscale
 
@@ -126,13 +121,11 @@ if (row < width && col < width) {
 
 A $4\times4$ output with $2\times2$ blocks uses four blocks and 16 threads. Each thread executes four multiply-add steps. No block barrier is needed because each output uses only immutable inputs and private state.
 
-**Alternative mapping:** one thread per output row needs only $W$ threads, each doing $W$ dot products. It reduces the number of threads but increases serial work per thread and changes the warp's memory access pattern. One thread per output column is another possible design. The exercise on p. 21 repeats “row” twice; treat it as a duplicated prompt rather than assuming a hidden second design.
+**Alternative mapping:** one thread per output row needs only $W$ threads, each doing $W$ dot products. It reduces the number of threads but increases serial work per thread and changes the warp's memory access pattern. One thread per output column is another possible design.
 
 **Connection:** algorithmic independence makes this kernel correct, but repeated input reads make it inefficient. See [[gpu_memory_and_performance#Roofline examples|naive GEMM intensity]] and [[gpu_memory_and_performance#Tiled matrix multiplication|tiled GEMM]].
 
 ## GPU hardware hierarchy
-
-*Source: pp. 22-27, 33.*
 
 The lecture's hierarchy is GPU → GPU Processing Clusters (GPCs) → Streaming Multiprocessors (SMs) → execution units, including Streaming Processors (SPs), also called CUDA cores. Other units handle tensor operations, ray tracing, loads/stores, texture work, and special functions.
 
@@ -140,15 +133,13 @@ The lecture's hierarchy is GPU → GPU Processing Clusters (GPCs) → Streaming 
 
 | Lecture architecture example | SM organization and examples |
 | --- | --- |
-| Ada AD102, pp. 24 | 12 GPCs × 12 SMs = 144 SMs; 128 SPs per SM |
-| Blackwell GB202, pp. 25-26 | 12 GPCs × 8 TPCs × 2 SMs = 192 SMs; 128 SPs per SM |
-| H100 example, p. 33 | 128 SPs per SM split into four processing blocks |
+| Ada AD102 | 12 GPCs × 12 SMs = 144 SMs; 128 SPs per SM |
+| Blackwell GB202 | 12 GPCs × 8 TPCs × 2 SMs = 192 SMs; 128 SPs per SM |
+| H100 example | 128 SPs per SM split into four processing blocks |
 
 These are architecture-level lecture illustrations, not promises about the enabled units of a particular retail device. Use them to understand hierarchy; use device queries for the machine running your code.
 
 ## Synchronization and block independence
-
-*Source: pp. 27-30.*
 
 A block is assigned as a unit to one SM, and multiple blocks may reside on that SM. Threads within a block can cooperate through shared memory and a block barrier:
 
@@ -172,8 +163,6 @@ Ordinary blocks must support execution in arbitrary order. `__syncthreads()` doe
 
 ## Waves and transparent scalability
 
-*Source: p. 30.*
-
 If a kernel grid has $G$ blocks and the GPU can concurrently accommodate $C$ blocks for that kernel, the simplified wave count is:
 
 $$
@@ -187,8 +176,6 @@ More blocks provide opportunities for load balancing. A partial final wave can l
 **Transparent scalability:** independent blocks let the same kernel execute on GPUs with different SM counts; scheduling adjusts how many blocks run concurrently.
 
 ## Warps and SIMT
-
-*Source: pp. 31-33, 36.*
 
 A warp contains 32 thread lanes in the lecture's model. A block with $T$ threads has $\lceil T/32\rceil$ warps; the final warp can contain inactive lanes. Warps are formed within each block, so compute grid warp count as **blocks × warps per block**, rather than combining leftover threads across blocks.
 
@@ -211,8 +198,6 @@ Having more resident warps provides more opportunities to issue useful work whil
 
 ## Control divergence
 
-*Source: pp. 34-35, 39.*
-
 Divergence occurs when threads **within a warp** follow different paths. The hardware executes path instructions with subsets of lanes active, lowering useful lane utilization. Warps taking different uniform paths do not create this kind of within-warp divergence.
 
 - A branch on `threadIdx.x % 2` splits every full 1D warp into even and odd lanes.
@@ -228,7 +213,7 @@ Since Volta, independent thread scheduling permits more flexible progress among 
 
 ## Occupancy and resource limits
 
-*Source: pp. 37-40. Shared-memory extension: [[gpu_memory_and_performance#Shared memory and occupancy|Shared memory and occupancy]].*
+For the shared-memory constraint, see [[gpu_memory_and_performance#Shared memory and occupancy|Shared memory and occupancy]].
 
 $$
 occupancy=\frac{resident\ warps\ per\ SM}{maximum\ supported\ warps\ per\ SM}.
@@ -272,9 +257,9 @@ Using the H100 lecture limits and assuming no other limit:
 
 ### Querying actual resources
 
-Page 38 introduces `cudaGetDeviceCount` and `cudaGetDeviceProperties`. Useful fields include `warpSize`, `maxThreadsPerBlock`, `maxThreadsDim`, `maxGridSize`, `multiProcessorCount`, and `maxThreadsPerMultiProcessor`.
+Use `cudaGetDeviceCount` and `cudaGetDeviceProperties` to query available devices and their properties. Useful fields include `warpSize`, `maxThreadsPerBlock`, `maxThreadsDim`, `maxGridSize`, `multiProcessorCount`, and `maxThreadsPerMultiProcessor`.
 
-**API correction:** use `regsPerMultiprocessor` and `sharedMemPerMultiprocessor` for per-SM capacities. `regsPerBlock` and `sharedMemPerBlock` refer to per-block limits; the per-SM labels in Lecture 2 p. 38 and Lecture 3 p. 24 mix these up. See the [NVIDIA device-property reference](https://docs.nvidia.com/cuda/cuda-runtime-api/cuda_runtime_api/structcudaDeviceProp.html).
+**Per-SM capacities:** use `regsPerMultiprocessor` and `sharedMemPerMultiprocessor` for per-SM capacities. `regsPerBlock` and `sharedMemPerBlock` refer to per-block limits; keep these distinct from per-SM capacities. See the [NVIDIA device-property reference](https://docs.nvidia.com/cuda/cuda-runtime-api/cuda_runtime_api/structcudaDeviceProp.html).
 
 ## Retrieval practice
 
@@ -282,7 +267,7 @@ Page 38 introduces `cudaGetDeviceCount` and `cudaGetDeviceProperties`. Useful fi
 2. How many launched and useful threads are in the $62\times76$ image example? How many warps does each $16\times16$ block contain?
 3. Why do blur boundary pixels need a neighbor count? Why should input and output be distinct?
 4. Why is a barrier under `if (threadIdx.x % 2 == 0)` unsafe?
-5. For 128-thread blocks, analyze the predicate `threadIdx.x < 40 || threadIdx.x >= 104`. Which warps execute its body, and which are divergent? (Adapted from p. 39.)
+5. For 128-thread blocks, analyze the predicate `threadIdx.x < 40 || threadIdx.x >= 104`. Which warps execute its body, and which are divergent?
 6. Under the same launch, what happens for an `i % 2 == 0` branch and a loop with trip count `5 - (i % 3)`?
 7. With 2048 threads/SM, 32 blocks/SM, and 65536 registers/SM, determine occupancy for `(T,r)=(128,30)`, `(32,29)`, and `(256,34)`.
 8. A barrier's eight threads arrive at 2.0, 2.3, 3.0, 2.8, 2.4, 1.9, 2.6, and 2.9 microseconds. What fraction of aggregate thread time is waiting?
@@ -292,7 +277,7 @@ Page 38 introduces `cudaGetDeviceCount` and `cudaGetDeviceProperties`. Useful fi
 > 2. 5120 launched, 4712 useful; eight warps per block.
 > 3. The truncated neighborhood contains fewer valid pixels. In-place writes could alter other threads' input reads.
 > 4. Only a subset reaches that barrier. Put the shared barrier outside the divergent condition.
-> 5. Warp 0 has 32 active lanes; warp 1 has 8; warp 2 has none; warp 3 has 24. Warps 1 and 3 diverge. For the p. 39 grid of eight blocks, 24 warps execute the body and 16 are divergent. Per-instruction efficiencies are 100%, 25%, and 75% for warps 0, 1, and 3.
+> 5. Warp 0 has 32 active lanes; warp 1 has 8; warp 2 has none; warp 3 has 24. Warps 1 and 3 diverge. For a grid of eight 128-thread blocks, 24 warps execute the body and 16 are divergent. Per-instruction efficiencies are 100%, 25%, and 75% for warps 0, 1, and 3.
 > 6. Every full warp has 16 even lanes, so all 32 grid warps execute the branch body and diverge, at 50% lane efficiency for that statement. The loop has three iterations where every lane participates, then two where only subsets remain.
 > 7. Respectively 16 blocks and 100%; 32 blocks and 50% (block slots); seven blocks and 87.5% (registers: eight would require 69632).
 > 8. The last arrival is at 3.0. Total available thread time is $8\cdot3=24$; useful time is 19.9; waiting is 4.1. Waiting fraction $4.1/24\approx17.1\%$.

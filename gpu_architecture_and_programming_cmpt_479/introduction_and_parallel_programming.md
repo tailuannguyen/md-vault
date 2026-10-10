@@ -9,7 +9,6 @@ tags:
   - gpu/foundations
   - cuda/programming
   - study/exam-review
-source: "[[raw_files/01_Introduction.pdf]]"
 ---
 
 # Introduction and Parallel Programming
@@ -17,7 +16,7 @@ source: "[[raw_files/01_Introduction.pdf]]"
 > [!abstract] Core idea
 > A GPU accelerates work that can be divided into many independent tasks. The CPU manages execution and data movement; CUDA maps the parallel work to a grid of threads. A faster kernel helps only to the extent that it improves the whole application's execution time.
 
-**Source:** [[raw_files/01_Introduction.pdf|Lecture 1 slides]]. Page references below use PDF page numbers. These are synthesized study notes; worked solutions and practical checklists are review aids derived from the lecture, rather than instructor-provided answers. Code is illustrative and has not been compiled on a CUDA device.
+Code examples are illustrative and have not been compiled on a CUDA device.
 
 **Knowledge links:** [[cuda_grids_gpu_architecture_and_scheduling|Thread mapping and scheduling]] explains how the grid executes. [[gpu_memory_and_performance|Memory and performance]] explains why many threads alone do not guarantee speed.
 
@@ -28,12 +27,10 @@ source: "[[raw_files/01_Introduction.pdf]]"
 - Cumulative review: connect Amdahl's application limit to [[gpu_memory_and_performance#Roofline model|the kernel's roofline limit]].
 - At work: start with [[#Practical review checklist]], then follow the scheduling and memory links.
 
-> [!info] Assessment context from the uploaded slides
-> Page 8 describes three in-class exams, rather than a separate midterm and final. The notes still support both early and cumulative exam review. They do not establish the scope of any particular exam; use the instructor's announcements for that.
+> [!info] Assessment context
+> The course uses three in-class exams, rather than a separate midterm and final. The notes still support both early and cumulative exam review. They do not establish the scope of any particular exam; use the instructor's announcements for that.
 
 ## Parallel computing foundations
-
-*Source: pp. 14-27, 43-48.*
 
 ### Instructions, data, and memory
 
@@ -87,8 +84,6 @@ These tradeoffs reappear as [[cuda_grids_gpu_architecture_and_scheduling#Synchro
 
 ## CPU and GPU design tradeoffs
 
-*Source: pp. 28-33.*
-
 | CPU emphasis | GPU emphasis |
 | --- | --- |
 | Low latency for a sequential instruction stream | High aggregate throughput for parallel work |
@@ -101,8 +96,6 @@ A heterogeneous application uses both. Moving a small task to a GPU can lose tim
 CUDA provides a general compute programming interface through language extensions and runtime functions. Historically, general-purpose GPU computation often had to be expressed using graphics APIs.
 
 ## Performance and Amdahl's law
-
-*Source: pp. 34-41.*
 
 **Latency** is elapsed time for a job, including communication and synchronization. **Throughput** is completed work per unit time. **Strong scaling** fixes total problem size while adding processors; **weak scaling** fixes problem size per processor while increasing total work.
 
@@ -139,8 +132,6 @@ Here $T_{extra}$ accounts for additional transfers, launches, or other overhead.
 
 ## CUDA execution and data movement
 
-*Source: pp. 49-65.*
-
 The **host** is the CPU side; the **device** is the GPU side. In the lecture's explicit-memory model, allocating host arrays does not allocate their device counterparts.
 
 The basic lifecycle is:
@@ -160,13 +151,11 @@ The basic lifecycle is:
 | `__global__` | GPU | Kernel; a host launch creates a grid of threads |
 | `__device__` | GPU | Device helper function; an ordinary call does not create a new grid |
 
-The slides also mention device-side kernel launches, but the examples here use host launches. `nvcc` separates host and device compilation; PTX is an intermediate device representation that can be compiled into machine code for a GPU. A typical source file is compiled with `nvcc example.cu -o example`.
+Device-side kernel launches are also possible, but the examples here use host launches. `nvcc` separates host and device compilation; PTX is an intermediate device representation that can be compiled into machine code for a GPU. A typical source file is compiled with `nvcc example.cu -o example`.
 
-Check CUDA API return values against `cudaSuccess` and obtain the message with `cudaGetErrorString`. The error-handling slide on p. 58 declares `err` but tests `error`; use the same variable name consistently.
+Check CUDA API return values against `cudaSuccess` and obtain the message with `cudaGetErrorString`. Use the same variable name consistently when storing and testing an error code.
 
 ## Vector addition
-
-*Source: pp. 54-68.*
 
 The operation is $C[i]=A[i]+B[i]$. Outputs are independent, so one thread can compute each element without a block barrier.
 
@@ -211,7 +200,7 @@ If each thread handles **two adjacent elements**, first compute its logical thre
 
 ## Preview of multidimensional mapping
 
-*Source: pp. 69-78; developed in [[cuda_grids_gpu_architecture_and_scheduling#Multidimensional mapping|Lecture 2]].*
+See [[cuda_grids_gpu_architecture_and_scheduling#Multidimensional mapping|Lecture 2]] for multidimensional mapping.
 
 Use $x$ for columns and $y$ for rows:
 
@@ -220,10 +209,10 @@ col=b_xB_x+t_x,\quad row=b_yB_y+t_y,\quad
 index=row\cdot width+col.
 $$
 
-For row-major RGB input, the pixel begins at `3 * index`; grayscale output uses `index`. The conceptual luminance expression on p. 50 is $0.299R+0.587G+0.114B$.
+For row-major RGB input, the pixel begins at `3 * index`; grayscale output uses `index`. A common luminance expression is $0.299R+0.587G+0.114B$.
 
-> [!warning] Slide consistency notes
-> Page 75's labels for rows and columns conflict with its launch expression. Derive grid $x$ from **width** and grid $y$ from **height**. Page 77's code figure uses different grayscale weights than p. 50, and its cast placement can truncate partial results. Choose one specified weighting convention and convert to the output type after evaluating the complete weighted sum.
+> [!warning] Coordinate and conversion conventions
+> Derive grid $x$ from **width** and grid $y$ from **height**. Choose one specified grayscale weighting convention and convert to the output type after evaluating the complete weighted sum, so intermediate values are not truncated.
 
 ## Retrieval practice
 
@@ -232,7 +221,7 @@ These priorities are suggested study targets, not a statement of exam coverage.
 1. Why does cache coherence fail to prevent the bank-withdrawal race?
 2. What is the difference between domain and functional decomposition?
 3. For $F=0.95$ and $p=20$, compute speedup, efficiency, and maximum speedup.
-4. A kernel uses $n=200000$ and $B=128$ (p. 68). How many blocks and threads launch? How many threads compute an output?
+4. A kernel uses $n=200000$ and $B=128$. How many blocks and threads launch? How many threads compute an output?
 5. Why does vector addition need a bounds check but no `__syncthreads()`?
 6. Derive the first index and launch size when each thread computes two adjacent outputs.
 7. Explain why a kernel-only speedup of $10\times$ might barely change application time.

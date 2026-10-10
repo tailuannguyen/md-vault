@@ -10,7 +10,6 @@ tags:
   - gpu/roofline
   - cuda/optimization
   - study/exam-review
-source: "[[raw_files/03_Memory_Perf_Optimizations.pdf]]"
 ---
 
 # GPU Memory and Performance
@@ -18,7 +17,7 @@ source: "[[raw_files/03_Memory_Perf_Optimizations.pdf]]"
 > [!abstract] Core idea
 > Performance depends on how much useful computation the GPU performs per byte transferred, how efficiently threads access memory, and whether enough independent work is ready. Use the roofline to identify a limit, then improve reuse, access patterns, or scheduling according to the actual bottleneck.
 
-**Source:** [[raw_files/03_Memory_Perf_Optimizations.pdf|Lecture 3 slides]]. References use PDF page numbers. Worked answers, code adaptations, and checklists are synthesized review aids. Code has not been compiled on a CUDA device. Numerical hardware limits are the lecture's examples.
+Code examples are illustrative and have not been compiled on a CUDA device.
 
 **Prerequisites:** [[introduction_and_parallel_programming#CUDA execution and data movement|Host/device execution]] and [[cuda_grids_gpu_architecture_and_scheduling#Occupancy and resource limits|warps, barriers, and occupancy]].
 
@@ -29,8 +28,6 @@ source: "[[raw_files/03_Memory_Perf_Optimizations.pdf]]"
 - At work: follow [[#Optimization workflow]] and use [[#Optimization decision table]] to select one change at a time.
 
 ## Roofline model
-
-*Source: pp. 6-10.*
 
 Let $C_{peak}$ be peak compute throughput, $BW_{peak}$ peak bandwidth, and $I$ arithmetic intensity:
 
@@ -46,7 +43,7 @@ The roofline plot has intensity on the horizontal axis and compute throughput on
 - If $I>I_{ridge}$, the model gives a compute-limited roof.
 - A measured kernel can fall far below either roof because of latency, insufficient work, divergence, instruction overhead, or other limits.
 
-Use a consistent memory level: DRAM bandwidth requires intensity based on DRAM traffic. Source-level loads, cache traffic, and actual DRAM transactions are different quantities. The slides' simple analyses count global-access bytes and ignore cache effects; they are explanatory bounds rather than complete performance predictions.
+Use a consistent memory level: DRAM bandwidth requires intensity based on DRAM traffic. Source-level loads, cache traffic, and actual DRAM transactions are different quantities. The simplified analyses here count global-access bytes and ignore cache effects; they are explanatory bounds rather than complete performance predictions.
 
 For the lecture's H100 example, $C_{peak}\approx67$ TFLOP/s and $BW_{peak}=3.35$ TB/s, so $I_{ridge}=20$ FLOP/B. Throughput also depends on precision and operation type; do not substitute a tensor-core peak for an ordinary FP32 kernel without justification.
 
@@ -54,7 +51,7 @@ For the lecture's H100 example, $C_{peak}\approx67$ TFLOP/s and $BW_{peak}=3.35$
 
 ### Vector addition
 
-*Source: p. 8; kernel in [[introduction_and_parallel_programming#Vector addition|Vector addition]].*
+See [[introduction_and_parallel_programming#Vector addition|Vector addition]] for the kernel.
 
 One FP32 output performs one addition, two 4-byte loads, and one 4-byte store:
 
@@ -73,8 +70,6 @@ The ideal bandwidth time is $12/3350\approx0.003582$ s, or 3.58 ms. Moving from 
 
 ### Matrix multiplication: capacity is not traffic
 
-*Source: pp. 9-10.*
-
 For square FP32 matrices of width $W$, approximate work is $2W^3$ FLOPs, counting a multiply-add as two FLOPs.
 
 If each input element is fetched once and each output stored once, ideal traffic is $12W^2$ bytes:
@@ -83,7 +78,7 @@ $$
 I_{ideal}=\frac{2W^3}{12W^2}=\frac{W}{6}.
 $$
 
-At $W=1024$, this is approximately 170.7 FLOP/B. This is an ideal reuse estimate, not the intensity of any arbitrary GEMM implementation. Page 9 rounds the coefficient to 0.167 and describes about 167 FLOP/B; $W/6$ is the consistent value.
+At $W=1024$, this is approximately 170.7 FLOP/B. This is an ideal reuse estimate, not the intensity of any arbitrary GEMM implementation.
 
 The [[cuda_grids_gpu_architecture_and_scheduling#Naive matrix multiplication|naive kernel]] fetches two floats for each multiply-add step. Including its final output stores, nominal traffic is $8W^3+4W^2$ bytes:
 
@@ -94,8 +89,6 @@ $$
 The lecture's simplified bandwidth roof is $3.35\cdot0.25=0.8375$ TFLOP/s. The difference from $W/6$ comes from repeated input requests: the array's storage capacity does not count how often values are fetched. Caches may satisfy some requests without DRAM access.
 
 ## GPU memory spaces
-
-*Source: pp. 11-14.*
 
 | Space | Typical physical storage | Who can use the data? | Lifetime and typical use |
 | --- | --- | --- | --- |
@@ -112,8 +105,6 @@ Register accesses do not consume global-memory bandwidth. Shared memory requires
 **Counting copies:** automatic variables have one logical copy per thread; a shared declaration has one per block; a device global or constant symbol is shared rather than replicated per thread. Resident storage and total copies created across an entire launch are different counts.
 
 ## Tiled matrix multiplication
-
-*Source: pp. 15-22.*
 
 Let tile width be $T$, with a $T\times T$ block computing one output tile. Each thread retains one output accumulator in registers.
 
@@ -181,7 +172,7 @@ Each input element is nominally requested $W$ times without tiling and $W/T$ tim
 
 ## Shared memory and occupancy
 
-*Source: pp. 23-25; general method in [[cuda_grids_gpu_architecture_and_scheduling#Occupancy and resource limits|Occupancy and resource limits]].*
+For the general calculation, see [[cuda_grids_gpu_architecture_and_scheduling#Occupancy and resource limits|Occupancy and resource limits]].
 
 Two FP32 tiles use $s=8T^2$ shared bytes per block. With $T^2$ threads, that is 8 bytes/thread. At $T=32$, storage is 8192 bytes/block and the block has 1024 threads. Shared-memory capacity need not be its binding constraint; threads, registers, block slots, and per-block restrictions still matter.
 
@@ -203,11 +194,9 @@ size_t sharedBytes = 2 * T * T * sizeof(float);
 // dynamicKernel<<<grid, block, sharedBytes>>>(...);
 ```
 
-Page 25's displayed declaration is malformed and mixes byte and element offset conventions. The fragment above keeps those units explicit. Account for static plus dynamic shared storage, and verify both per-block and per-SM limits. The correct query fields are explained in [[cuda_grids_gpu_architecture_and_scheduling#Querying actual resources|the device-query note]], based on [NVIDIA's API reference](https://docs.nvidia.com/cuda/cuda-runtime-api/cuda_runtime_api/structcudaDeviceProp.html).
+The fragment above distinguishes launch storage in bytes from pointer offsets in float elements. Account for static plus dynamic shared storage, and verify both per-block and per-SM limits. The correct query fields are explained in [[cuda_grids_gpu_architecture_and_scheduling#Querying actual resources|the device-query note]], based on [NVIDIA's API reference](https://docs.nvidia.com/cuda/cuda-runtime-api/cuda_runtime_api/structcudaDeviceProp.html).
 
 ## Global memory coalescing
-
-*Source: pp. 27-30.*
 
 Coalescing combines memory requests from lanes executing the **same warp instruction** into fewer transactions when their addresses fit the hardware's transaction layout. Think across lanes at one instruction, rather than only across successive accesses by one thread.
 
@@ -226,8 +215,6 @@ For $16\times16$ blocks, each warp spans two rows. Analyze both groups of 16 lan
 
 ## DRAM latency and bandwidth utilization
 
-*Source: pp. 31-34.*
-
 Multiple channels and banks allow memory requests to overlap. While one bank waits through an access cycle, other banks can use the channel. Interleaving consecutive address ranges across channels/banks spreads traffic.
 
 For a simplified double-data-rate channel:
@@ -241,8 +228,6 @@ A 64-bit channel at 3.2 GHz gives $8\cdot2\cdot3.2=51.2$ GB/s, the lecture's DDR
 The lecture's simplified bank-overlap model needs at least $R+1$ banks when $R$ is the ratio of array access latency to transfer time. This is an explanatory model, not a universal bank-count formula for every memory controller. [[cuda_grids_gpu_architecture_and_scheduling#Latency hiding|Ready warp scheduling]] and parallel memory requests both help tolerate latency; neither increases the physical peak bandwidth.
 
 ## Shared memory bank conflicts
-
-*Source: pp. 36-37, 47.*
 
 Under the lecture's 32-bank, 4-byte-word model:
 
@@ -276,13 +261,11 @@ For a full warp accessing **distinct** words `a[lane * stride]`, bank sequence i
 
 ## Other optimization techniques
 
-*Source: pp. 35, 38-42.*
-
 ### Vector loads and stores
 
 `float4` represents four FP32 elements, or 16 bytes. A thread can load two vectors, perform four additions, and write one output vector. This reduces the number of load/store instructions relative to four separate scalar accesses; it does not change vector addition's useful 1 FLOP per 12 bytes.
 
-Use correctly aligned full vector groups and separately handle any scalar tail. Page 35's figure uses `blockDim.x * blockIdx.x + threadIdx.x` as a **vector index**; convert that to scalar offset `4*i` when working with scalar pointers. Avoid assuming that any arbitrary offset into a float allocation remains aligned for `float4`.
+Use correctly aligned full vector groups and separately handle any scalar tail. When using `blockDim.x * blockIdx.x + threadIdx.x` as a **vector index**, convert that to scalar offset `4*i` when working with scalar pointers. Avoid assuming that any arbitrary offset into a float allocation remains aligned for `float4`.
 
 ### Thread coarsening
 
@@ -296,13 +279,11 @@ Replicate loop bodies, for example with `#pragma unroll 4`, to reduce loop-contr
 
 Use separate input and output scratchpads so threads can read the old state while writing the next state. After a common barrier, swap their roles. This removes an overwrite hazard that otherwise requires a read-completion barrier before writing into the same buffer.
 
-The p. 41 example reduces two barriers per iteration to one by removing a write-after-read dependence. It still needs initial data preparation and a synchronization point before new outputs are read, and it uses more storage. Double buffering alone does not guarantee asynchronous overlap of memory transfer and computation.
+Removing a write-after-read dependence can reduce two barriers per iteration to one. It still needs initial data preparation and a synchronization point before new outputs are read, and it uses more storage. Double buffering alone does not guarantee asynchronous overlap of memory transfer and computation.
 
-The checklist on p. 42 also mentions register tiling, warp-level cooperation, and privatization. Its privatization entry is explicitly marked as covered later; treat these as follow-on topics rather than fully taught algorithms in this lecture.
+Register tiling, warp-level cooperation, and privatization are further optimization topics; their algorithms are not developed here.
 
 ## Optimization decision table
-
-*Synthesis from pp. 27-43.*
 
 | Observation to investigate | Candidate change | Benefit to test | Tradeoff to inspect |
 | --- | --- | --- | --- |
@@ -317,8 +298,6 @@ The checklist on p. 42 also mentions register tiling, warp-level cooperation, an
 | Fine-grained work repeats overhead | Modest thread coarsening | Amortized overhead | Fewer blocks, larger per-thread state |
 
 ## Optimization workflow
-
-*Source: p. 43, with practical review steps added.*
 
 1. **Establish correctness.** Compare with a reference using appropriate numerical tolerance. Include partial tiles and small sizes.
 2. **Define the measurement.** Record GPU, data type, problem size, and whether time includes allocation and host transfers. Ensure timing covers completed device execution.
@@ -341,7 +320,7 @@ Remember [[introduction_and_parallel_programming#Performance and Amdahl's law|Am
 7. How do tiling, coalescing, and padding solve different problems?
 8. For `a[lane*24]`, which banks are accessed and what is the conflict degree?
 9. Does vectorizing vector addition improve its arithmetic intensity? Does doubling occupancy guarantee double throughput?
-10. In p. 46's example, eight 128-thread blocks each declare private `i` and `float x[4]`, plus shared `float y_s` and `float b_s[128]`. Count copies and shared storage. If each thread loads four input floats and one old output float, then stores one output after five multiplications and five additions, compute intensity.
+10. Eight 128-thread blocks each declare private `i` and `float x[4]`, plus shared `float y_s` and `float b_s[128]`. Count copies and shared storage. If each thread loads four input floats and one old output float, then stores one output after five multiplications and five additions, compute intensity.
 
 > [!success]- Answer key
 > 1. $I=36/(7\cdot4)=9/7\approx1.286$ FLOP/B. Ridge (a) is 2, so the bandwidth roof binds at about 128.6 GFLOP/s. Ridge (b) is 1.2, so the compute roof binds at 300 GFLOP/s. Actual performance can be lower.
@@ -349,7 +328,7 @@ Remember [[introduction_and_parallel_programming#Performance and Amdahl's law|Am
 > 3. $8(32^2)=8192$ bytes; approximately 8 FLOP/B; 32-fold fewer input requests under the divisible-dimension model.
 > 4. First: wait for tile producers before reading. Second: wait for readers before overwriting. Invalid-output threads may supply needed tile inputs and must reach the common barriers.
 > 5. 512000 private copies and 1000 shared copies, not necessarily all resident at once. Shared arrays count as one array per block.
-> 6. (a) Shared storage permits 24 blocks, giving 1536 threads and 75% occupancy. (b) Eight blocks fit, giving 2048 threads and 100% occupancy in the simplified model. Page 45 says “shared memory/SM” for the per-kernel amounts; these answers explicitly interpret those amounts as **per block**. If they instead mean total shared usage per SM, that occupancy constraint cannot be inferred the same way.
+> 6. (a) Shared storage permits 24 blocks, giving 1536 threads and 75% occupancy. (b) Eight blocks fit, giving 2048 threads and 100% occupancy in the simplified model. The kernel-specific shared-memory amounts in this calculation are **per block**. If they instead mean total shared usage per SM, that occupancy constraint cannot be inferred the same way.
 > 7. Tiling reduces repeated requests; coalescing reduces transaction waste across warp lanes; padding reduces distinct-word contention in shared banks.
 > 8. Banks 0, 24, 16, and 8; eight distinct-word requests per bank, an 8-way conflict.
 > 9. No: useful work and bytes remain 1 FLOP per 12 bytes. No: ready work and other bottlenecks determine whether extra occupancy helps.

@@ -1,6 +1,6 @@
 # Word2vec training derivations
 
-This note develops the mathematics behind the training objectives in [[natural_language_processing_cmpt_413/lecture_06_word2vec|Lecture 6: Word2vec]]. It keeps the softmax gradients, negative-sampling gradients, and shifted-PMI argument together because they explain how the same word-context scores are learned under different objectives.
+This note develops the mathematics behind the training objectives in [[natural_language_processing_cmpt_413/06_word2vec|Lecture 6: Word2vec]]. It keeps the softmax gradients, negative-sampling gradients, and shifted-PMI argument together because they explain how the same word-context scores are learned under different objectives.
 
 ## Setup and notation
 
@@ -173,4 +173,4 @@ The usual $3/4$-power noise therefore changes the simple shifted-PMI expression.
 
 This explains a relationship with matrix factorization, but does not make SGNS identical to SVD of clipped PPMI. Their losses and constraints differ.
 
-Return to [[natural_language_processing_cmpt_413/lecture_06_word2vec|the Word2vec lecture note]].
+Return to [[natural_language_processing_cmpt_413/06_word2vec|the Word2vec lecture note]].
