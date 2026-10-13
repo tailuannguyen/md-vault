@@ -9,7 +9,6 @@ tags:
   - cuda/thread-mapping
   - gpu/scheduling
   - gpu/occupancy
-  - study/exam-review
 ---
 
 # CUDA Grids, GPU Architecture, and Scheduling
@@ -19,11 +18,11 @@ tags:
 
 Code examples are illustrative and have not been compiled on a CUDA device.
 
-**Prerequisite:** [[introduction_and_parallel_programming#Vector addition|CUDA indexing and vector addition]]. **Next:** [[gpu_memory_and_performance|Memory reuse and optimization]].
+**Foundations:** [[introduction_and_parallel_programming#Vector addition|CUDA indexing and vector addition]]. **Next:** [[gpu_memory_and_performance|Memory reuse and optimization]].
 
 ## Review route
 
-- Early exam review: derive [[#Multidimensional mapping]], trace [[#Example kernels]], and explain [[#Synchronization and block independence]].
+- Foundations: derive [[#Multidimensional mapping]], trace [[#Example kernels]], and explain [[#Synchronization and block independence]].
 - Cumulative review: compute [[#Warps and SIMT]], [[#Control divergence]], and [[#Occupancy and resource limits]], then combine occupancy with [[gpu_memory_and_performance#Shared memory and occupancy|shared-memory requirements]].
 - Work reference: use [[#Practical review checklist]] to inspect a launch or diagnose insufficient parallel work.
 

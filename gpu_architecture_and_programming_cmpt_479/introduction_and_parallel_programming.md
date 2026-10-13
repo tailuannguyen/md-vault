@@ -8,7 +8,6 @@ tags:
   - cmpt479
   - gpu/foundations
   - cuda/programming
-  - study/exam-review
 ---
 
 # Introduction and Parallel Programming
@@ -23,12 +22,9 @@ Code examples are illustrative and have not been compiled on a CUDA device.
 ## Review route
 
 - First pass: [[#Parallel computing foundations]] → [[#Performance and Amdahl's law]] → [[#CUDA execution and data movement]] → [[#Vector addition]].
-- Before an exam: derive the formulas and kernel from memory, then attempt [[#Retrieval practice]] before expanding the answers.
+- Practice: derive the formulas and kernel from memory, then attempt [[#Retrieval practice]] before expanding the answers.
 - Cumulative review: connect Amdahl's application limit to [[gpu_memory_and_performance#Roofline model|the kernel's roofline limit]].
 - At work: start with [[#Practical review checklist]], then follow the scheduling and memory links.
-
-> [!info] Assessment context
-> The course uses three in-class exams, rather than a separate midterm and final. The notes still support both early and cumulative exam review. They do not establish the scope of any particular exam; use the instructor's announcements for that.
 
 ## Parallel computing foundations
 
@@ -215,8 +211,6 @@ For row-major RGB input, the pixel begins at `3 * index`; grayscale output uses 
 > Derive grid $x$ from **width** and grid $y$ from **height**. Choose one specified grayscale weighting convention and convert to the output type after evaluating the complete weighted sum, so intermediate values are not truncated.
 
 ## Retrieval practice
-
-These priorities are suggested study targets, not a statement of exam coverage.
 
 1. Why does cache coherence fail to prevent the bank-withdrawal race?
 2. What is the difference between domain and functional decomposition?

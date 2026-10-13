@@ -9,7 +9,6 @@ tags:
   - gpu/memory
   - gpu/roofline
   - cuda/optimization
-  - study/exam-review
 ---
 
 # GPU Memory and Performance
@@ -19,11 +18,11 @@ tags:
 
 Code examples are illustrative and have not been compiled on a CUDA device.
 
-**Prerequisites:** [[introduction_and_parallel_programming#CUDA execution and data movement|Host/device execution]] and [[cuda_grids_gpu_architecture_and_scheduling#Occupancy and resource limits|warps, barriers, and occupancy]].
+**Foundations:** [[introduction_and_parallel_programming#CUDA execution and data movement|Host/device execution]] and [[cuda_grids_gpu_architecture_and_scheduling#Occupancy and resource limits|warps, barriers, and occupancy]].
 
 ## Review route
 
-- Before an exam: derive [[#Roofline model]], explain the two [[#Tiled matrix multiplication|tile barriers]], compute [[#Shared memory bank conflicts]], then attempt [[#Retrieval practice]].
+- Practice: derive [[#Roofline model]], explain the two [[#Tiled matrix multiplication|tile barriers]], compute [[#Shared memory bank conflicts]], then attempt [[#Retrieval practice]].
 - Cumulative review: connect [[introduction_and_parallel_programming#Performance and Amdahl's law|application speedup]] → kernel roofline → [[cuda_grids_gpu_architecture_and_scheduling#Occupancy and resource limits|resource limits]].
 - At work: follow [[#Optimization workflow]] and use [[#Optimization decision table]] to select one change at a time.
 

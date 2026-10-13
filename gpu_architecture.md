@@ -4,11 +4,9 @@ CMPT 479/982
 
 ## Course overview
 
-The calendar description covers current topics in computing systems, selected according to faculty and student interest. This offering focuses on the architecture and programming principles of graphics processing units (GPUs).
+GPU architecture and programming studies the compute and memory principles of graphics processing units (GPUs) and how to use them effectively.
 
 The course connects GPU compute and memory architecture with heterogeneous data-parallel programming in CUDA. It examines how threads, warps, scheduling, synchronization, and memory access influence program behavior and performance.
-
-Alongside textbook reading, students read original research papers, complete homework assignments, and collaborate on a large programming project. The course is cross-listed with the graduate course CMPT 982 G400. The course description identifies this as its first offering, with possible changes to topics and grading guidelines.
 
 ## Course topics
 
@@ -17,14 +15,13 @@ Alongside textbook reading, students read original research papers, complete hom
 - GPU performance optimizations.
 - Heterogeneous data-parallel computing using CUDA.
 - CUDA programs and optimizations for convolution, reduction, sorting, and matrix multiplication.
-- Time permitting: graph operations, convolutional neural networks, and attention in large language models.
+- Extensions: graph operations, convolutional neural networks, and attention in large language models.
 
 ## Educational goals
 
 - Understand the basics of GPU compute and memory architecture.
 - Write GPU programs using CUDA.
-- Read, review, and present research papers.
-- Collaborate on a large programming project using CUDA.
+- Read and analyze GPU architecture research.
 
 ## Note outline
 
