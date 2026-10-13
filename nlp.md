@@ -10,7 +10,7 @@ Human languages differ from programming languages: their structure and meaning a
 
 Applications include translating speech between languages during a phone call, animating a person speaking written text, interpreting instructions for a robot, discovering protein–drug interactions in medical abstracts, and analyzing ancient scripts. These applications connect language understanding and representation to practical tasks.
 
-The course introduces basic linguistic concepts and algorithms for processing text with probabilistic models and neural networks. It requires a strong background in probability, linear algebra, and calculus, along with confidence implementing algorithms. Coding assignments use Python and PyTorch. Familiarity with machine learning and deep learning is recommended.
+The material introduces basic linguistic concepts and algorithms for processing text with probabilistic models and neural networks. Probability, linear algebra, and calculus provide the mathematical foundations; Python and PyTorch support implementing and training these models.
 
 ## Course topics
 
@@ -31,7 +31,7 @@ The course introduces basic linguistic concepts and algorithms for processing te
 
 ## Note outline
 
-- [01: NLP introduction and course setup](natural_language_processing_cmpt_413/01_nlp_introduction.md): language ambiguity, NLP tasks, and course expectations.
+- [01: NLP introduction](natural_language_processing_cmpt_413/01_nlp_introduction.md): language, NLP applications, and representation, composition, and prediction.
 - [01a: NLP history and representations](natural_language_processing_cmpt_413/01a_history_and_representations.md): rules and learned representations, scale and sparsity, the Vauquois triangle, context learning, and composition.
 - [01b: Language models](natural_language_processing_cmpt_413/01b_language_models.md): sequence probabilities, vocabulary handling, n-grams, smoothing and interpolation, generation, evaluation, and perplexity.
 - [Language model derivations](natural_language_processing_cmpt_413/language_model_derivations.md): the companion to note 01b, with maximum-likelihood estimation proofs and normalization over variable-length strings using STOP.
