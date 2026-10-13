@@ -25,6 +25,12 @@ The scope extends beyond coursework to professional work, personal projects, hob
 - For lecture PDF conversions, deliver the lecture Markdown notes and substantial derivation notes where needed, and maintain the navigation hierarchy below. Do not add review guides, generated quizzes, separate index notes, source/coverage reports, graph files, relationship proposals, or JSON context exports unless newly requested.
 - Prefer plain headings, prose, equations, and useful examples. Avoid unnecessary frontmatter and decorative callouts.
 
+## Course content scope
+
+- Course notes and their overview notes preserve reusable subject knowledge. Omit course logistics unless explicitly requested: grading, exam schedules and formats, deadlines, submission platforms and procedures, assignment requirements, group sizes and contribution rules, project administration, attendance, office hours, enrollment prerequisites, and course-specific LLM-use policies.
+- Retain technical concepts, applications, mathematical foundations, algorithms, practical tools, worked examples, proofs, and derivations. Course identifiers may remain for organization; learning dependencies between technical topics are useful knowledge rather than administrative requirements.
+- A lecture dominated by logistics may produce a short note once that material is removed. Do not pad it or treat omitted administration as a substantive coverage gap.
+
 ## Lecture depth, derivations, and quality
 
 - The preference for fewer files concerns organization, not a strict word limit. A short synopsis or list of topic names is insufficient when the lecture teaches substantial methods or mathematics.
@@ -44,7 +50,7 @@ The scope extends beyond coursework to professional work, personal projects, hob
 - Use the root `AGENTS.md` as both the central navigation node and the agent instruction file. Keep links to `README.md` and each subject or area overview in its opening navigation section. Do not recreate a separate index note.
 - Keep broad subject overview notes at the root, such as `nlp.md` and `gpu_architecture.md`. For a course, include its overview, topics, educational goals, and a concise linked outline of every note belonging to it, including substantial derivation companions.
 - Follow the hierarchy: `AGENTS.md` → subject overview → lecture or other substantive notes. The README introduces the vault and links to the subject overviews; detailed note listings belong in those overviews.
-- When adding or converting material, update the relevant subject outline and the root README in the same task. Add a navigation link in `AGENTS.md` when creating a new subject or area overview. Preserve the owner's supplied course descriptions and do not create empty nodes for syllabus topics without notes.
+- When adding or converting material, update the relevant subject outline and the root README in the same task. Add a navigation link in `AGENTS.md` when creating a new subject or area overview. Preserve the subject information in the owner's supplied course descriptions while omitting administration as instructed above, and do not create empty nodes for syllabus topics without notes.
 
 ## Links and knowledge graphs
 

@@ -4,7 +4,7 @@ This vault holds my context, knowledge, and the connections within that knowledg
 
 Start with [AGENTS.md](AGENTS.md), which combines vault navigation and agent instructions. Each subject overview describes its area and provides a linked outline of its notes.
 
-The vault uses plain Markdown for Obsidian and terminal navigation. Notes cover substantial, cohesive subjects, with major concepts organized into sections. Lecture notes retain important explanations and foundational mathematics; lengthy derivations and proofs can live in linked companion notes. Connections between subjects are added deliberately as I evaluate them.
+The vault uses plain Markdown for Obsidian and terminal navigation. Notes cover substantial, cohesive subjects, with major concepts organized into sections. Lecture notes retain important explanations and foundational mathematics; lengthy derivations and proofs can live in linked companion notes. Course notes focus on reusable subject knowledge and omit course administration. Connections between subjects are added deliberately as I evaluate them.
 
 ## Coursework
 
